@@ -22,5 +22,6 @@ int main()
         window.clear();
         mainMenu.draw(window);
         window.display();
+        //testing
     }
 }
