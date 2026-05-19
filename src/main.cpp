@@ -1,12 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include "menu.hpp"
-
+// new change
 int main()
 {
     RenderWindow window(
         VideoMode({1280, 720}),
-        "Ping Pong"
-    );
+        "Ping Pong");
     Menu mainMenu;
 
     while (window.isOpen())
@@ -22,6 +21,6 @@ int main()
         window.clear();
         mainMenu.draw(window);
         window.display();
-        //testing
+        // testing
     }
 }
