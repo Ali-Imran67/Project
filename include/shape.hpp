@@ -12,31 +12,16 @@ class shape {
 
     public:
 
-    shape(Vector2f initialPos, Vector2f initialSpeed) : position(initialPos), speed(initialSpeed) {}
+    shape(Vector2f initialPos, Vector2f initialSpeed) : position(initialPos), speed(initialSpeed) {} // constructor
 
-    virtual ~shape() = default;
-    virtual void draw(RenderWindow& window) = 0;
+    virtual ~shape() = default; // automatically frees memory thats why I used default
+    virtual void draw(RenderWindow& window) = 0; // 0 implies that each derived class will have to create its own draw function logic
     
-    virtual void update(float deltaTime)
-    {
-        position +=  speed * deltaTime;
-    }
+    virtual void update(float deltaTime); // make a function for updating position with time
 
-    Vector2f getPosition() const
-    {
-        return position;
-    }
-    void setPosition(Vector2f pos)
-    {
-        position = pos;
-    }
+    Vector2f getPosition() const; // should return position
+    void setPosition(Vector2f pos); // used to set position
 
-    Vector2f getSpeed() const 
-    {
-        return speed;
-    }
-    void setSpeed(Vector2f sp)
-    {
-        speed = sp;
-    }
+    Vector2f getSpeed() const;
+    void setSpeed(Vector2f sp);
 };
