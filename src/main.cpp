@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "menu.hpp"
 // new change
+// new comment added
 int main()
 {
     RenderWindow window(
