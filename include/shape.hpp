@@ -5,7 +5,7 @@ using namespace std;
 using namespace sf;
 
 class shape {
-    protected:
+    protected: //comment test
 
     Vector2f position;
     Vector2f speed;
