@@ -15,7 +15,7 @@ Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/Pla
     SFX.play("MenuTheme");
 }
 
-void Menu::Input(RenderWindow& window) 
+void Menu::Input(RenderWindow& window, GameState& current_state) 
 {
     bool LeftMouseCurrent = Mouse::isButtonPressed(Mouse::Button::Left);
 

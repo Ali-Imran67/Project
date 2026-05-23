@@ -1,6 +1,7 @@
 #pragma once
 #include "button.hpp"
 #include "audio.hpp"
+#include "gameState.hpp"
 
 class Menu {
 
@@ -19,6 +20,6 @@ class Menu {
     public:
 
     Menu();
-    void Input(RenderWindow& window);
+    void Input(RenderWindow& window, GameState& current_state);
     void draw(RenderWindow& window);
 };
