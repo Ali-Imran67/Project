@@ -1,6 +1,7 @@
 #pragma once
 #include "button.hpp"
 #include "audio.hpp"
+#include "leaderboard.hpp"
 #include "gameState.hpp"
 
 class Menu {
@@ -16,6 +17,8 @@ class Menu {
     SoundManager SFX;
 
     bool LeftMousePressed = false;
+
+    Leaderboard myleaderboard;
 
     public:
 
