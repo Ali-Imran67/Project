@@ -168,7 +168,8 @@ void Leaderboard::show(sf::RenderWindow& window)
         }
         leftMousePressed = leftMouseCurrent;
 
-        window.clear(sf::Color::Black);
+        window.clear(sf::Color::Black); //First clear window to Black before drawing the leaderboard
+        backButton.create(window); //Creating the back button to return to the menu
 
         //Drawing Main Frame
         sf::Sprite frameSprite(frameTexture);
