@@ -16,6 +16,8 @@ class Menu {
 
     bool LeftMousePressed = false;
 
+    Leaderboard myleaderboard;
+
     public:
 
     Menu();

@@ -1,4 +1,5 @@
 #include "menu.hpp"
+#include "Leaderboard.hpp"
 
 Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/PlayHover.png", {500.f,500.f}), leaderboard("../assets/Textures/Leaderboard.png", "../assets/Textures/LeaderboardHover.png", {500.f,600.f}), LogoSprite(LogoTexture)
 {
@@ -13,6 +14,8 @@ Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/Pla
     SFX.loadSound("MenuTheme", "../assets/Sounds/MenuTheme.wav");
     SFX.setLoop("MenuTheme", true);
     SFX.play("MenuTheme");
+
+    myleaderboard.loadassets("../assets/Orange Kid.otf");
 }
 
 void Menu::Input(RenderWindow& window) 
