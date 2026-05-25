@@ -21,10 +21,22 @@ bool Leaderboard::loadassets(const string& fontpath)
         fontLoaded = true;
     }
 
-    frameTexture.loadFromFile("../assets/Textures/LeaderboardFiles/Frame.png");
-    placeholderTexture.loadFromFile("../assets/Textures/LeaderboardFiles/NameWinButtton.png");
-    headertex.loadFromFile("../assets/Textures/LeaderboardFiles/LeaderboardHeader.png");
-    ranktex.loadFromFile("../assets/Textures/LeaderboardFiles/RankDisplay.png");
+    if(!frameTexture.loadFromFile("../assets/Textures/LeaderboardFiles/Frame.png"))
+    {
+        cout << "Failed to load frame texture for leaderboard" << endl;
+    }
+    if(!placeholderTexture.loadFromFile("../assets/Textures/LeaderboardFiles/NameWinButtton.png"))
+    {
+        cout << "Failed to load placeholder texture for leaderboard" << endl;
+    }
+    if(!headertex.loadFromFile("../assets/Textures/LeaderboardFiles/LeaderboardHeader.png"))
+    {
+        cout << "Failed to load header texture for leaderboard" << endl;
+    }
+    if(!ranktex.loadFromFile("../assets/Textures/LeaderboardFiles/RankDisplay.png"))
+    {
+        cout << "Failed to load rank texture for leaderboard" << endl;
+    }
     return fontLoaded;
 }
 

@@ -37,6 +37,7 @@ void Menu::Input(RenderWindow& window)
         if (leaderboard.isClicked(mousePosition))
         {
             // display leaderboard
+            myleaderboard.show(window);
         }
 
     }

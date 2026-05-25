@@ -1,6 +1,7 @@
 #pragma once
 #include "button.hpp"
 #include "audio.hpp"
+#include "leaderboard.hpp"
 
 class Menu {
 
