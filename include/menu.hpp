@@ -1,6 +1,8 @@
 #pragma once
 #include "button.hpp"
 #include "audio.hpp"
+#include "leaderboard.hpp"
+#include "gameState.hpp"
 
 class Menu {
 
@@ -16,9 +18,11 @@ class Menu {
 
     bool LeftMousePressed = false;
 
+    Leaderboard myleaderboard;
+
     public:
 
     Menu();
-    void Input(RenderWindow& window);
+    void Input(RenderWindow& window, GameState& current_state);
     void draw(RenderWindow& window);
 };
