@@ -4,10 +4,10 @@
 #include "leaderboard.hpp"
 #include "gameState.hpp"
 
-class Menu {
+class Menu
+{
 
-    private:
-
+private:
     button play;
     button leaderboard;
 
@@ -20,9 +20,12 @@ class Menu {
 
     Leaderboard myleaderboard;
 
-    public:
+    // ADD THESE TWO LINES FOR AUDIO DEBOUNCING:
+    bool playHoveredLastFrame = false;
+    bool leaderboardHoveredLastFrame = false;
 
+public:
     Menu();
-    void Input(RenderWindow& window, GameState& current_state);
-    void draw(RenderWindow& window);
+    void Input(RenderWindow &window, GameState &current_state);
+    void draw(RenderWindow &window);
 };

@@ -1,7 +1,7 @@
 #include "menu.hpp"
 #include "Leaderboard.hpp"
 
-Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/PlayHover.png", {500.f,500.f}), leaderboard("../assets/Textures/Leaderboard.png", "../assets/Textures/LeaderboardHover.png", {500.f,600.f}), LogoSprite(LogoTexture)
+Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/PlayHover.png", {500.f, 500.f}), leaderboard("../assets/Textures/Leaderboard.png", "../assets/Textures/LeaderboardHover.png", {500.f, 600.f}), LogoSprite(LogoTexture)
 {
 
     if (LogoTexture.loadFromFile("../assets/Textures/Logo.png"))
@@ -16,13 +16,16 @@ Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/Pla
     SFX.play("MenuTheme");
 
     myleaderboard.loadassets("../assets/Orange Kid.otf");
+
+    SFX.loadSound("HoverSound", "../assets/Sounds/ButtonHover.wav");
 }
 
-void Menu::Input(RenderWindow& window, GameState& current_state) 
+void Menu::Input(RenderWindow &window, GameState &current_state)
 {
     bool LeftMouseCurrent = Mouse::isButtonPressed(Mouse::Button::Left);
 
-    if (LeftMouseCurrent && !LeftMousePressed) {
+    if (LeftMouseCurrent && !LeftMousePressed)
+    {
         Vector2i mousePosition = Mouse::getPosition(window);
 
         if (play.isClicked(mousePosition)) // TO DO: add a debounce to this
@@ -39,12 +42,11 @@ void Menu::Input(RenderWindow& window, GameState& current_state)
             // display leaderboard
             myleaderboard.show(window);
         }
-
     }
     LeftMousePressed = LeftMouseCurrent;
 }
 
-void Menu::draw(RenderWindow& window) // creating the buttons finally
+void Menu::draw(RenderWindow &window) // creating the buttons finally
 {
     window.draw(LogoSprite);
     play.create(window);
