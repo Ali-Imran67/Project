@@ -1,36 +1,48 @@
 #include <SFML/Graphics.hpp>
 #include "menu.hpp"
+#include "leaderboard.hpp"
 
 int main()
 {
-    RenderWindow window(VideoMode({1280, 720}),"Ping Pong");
+    RenderWindow window(VideoMode({1280, 720}), "Ping Pong");
     GameState current_State = GameState::MainMenu;
     Menu mainMenu;
 
-
     while (window.isOpen())
     {
-        while (const optional event = window.pollEvent()) // close game
+
+        while (const auto event = window.pollEvent())
         {
             if (event->is<Event::Closed>())
                 window.close();
+
+            if (current_State == GameState::NameEntry)
+            {
+                mainMenu.handleTextEvents(*event, current_State);
+            }
         }
 
-
-        if (current_State == GameState::MainMenu) { // handling button presses
+        if (current_State == GameState::MainMenu) 
+        { 
             mainMenu.Input(window, current_State);
-            
         }
+
         window.clear();
 
-        if (current_State == GameState::MainMenu) // displaying info on screen
+        // check our screens sequentially 
+        if (current_State == GameState::MainMenu) 
         {
-            mainMenu.draw(window);
+            mainMenu.draw(window, current_State);
         }
-        else if (current_State == GameState::Leaderboard) {
-            // TO DO: Kabeer this is where the leaderboard goes
+        else if (current_State == GameState::NameEntry) 
+        {
+            mainMenu.draw(window, current_State); 
         }
-        window.display();
+        else if (current_State == GameState::Leaderboard) 
+        { 
+            mainMenu.draw(window, current_State);
+        }
         
+        window.display();
     }
 }

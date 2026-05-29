@@ -25,7 +25,7 @@ bool Leaderboard::loadassets(const string& fontpath)
     {
         cout << "Failed to load frame texture for leaderboard" << endl;
     }
-    if(!placeholderTexture.loadFromFile("../assets/Textures/LeaderboardFiles/NameWinButtton.png"))
+    if(!placeholderTexture.loadFromFile("../assets/Textures/LeaderboardFiles/NameWinButton.png"))
     {
         cout << "Failed to load placeholder texture for leaderboard" << endl;
     }
