@@ -43,18 +43,18 @@ int main()
 
     sf::Text p1Text(gameFont, "", 40);
     p1Text.setFillColor(sf::Color::Black);
-    p1Text.setPosition({50.f, upperBoundaryY + 2.f});
+    p1Text.setPosition({50.f, upperBoundaryY - 8.f});
 
     sf::Text p2Text(gameFont, "", 40);
     p2Text.setFillColor(sf::Color::Black);
-    p2Text.setPosition({1150.f, upperBoundaryY + 2.f});
+    p2Text.setPosition({1150.f, upperBoundaryY - 8.f});
 
     //Score Text
     int p1Score = 0;
     int p2Score = 0;
     sf::Text scoreText(gameFont, "0 : 0", 40);
     scoreText.setFillColor(sf::Color::Black);
-    scoreText.setPosition({610.f, upperBoundaryY + 2.f});
+    scoreText.setPosition({610.f, upperBoundaryY - 8.f});
 
     bool namesloaded = false;
 
