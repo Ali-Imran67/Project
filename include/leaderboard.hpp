@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "gameState.hpp"
 #include <fstream>
 #include <string>
 #include "button.hpp"
@@ -39,7 +40,7 @@ class Leaderboard
         
         bool loadassets(const string& fontpath);
         void update(string p1, string p2, bool p1won, bool p2won);
-        void show(sf::RenderWindow& window);
+        void show(sf::RenderWindow& window, GameState& current_state);
         
 };
 #endif
