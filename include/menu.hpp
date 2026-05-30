@@ -20,7 +20,7 @@ private:
 
     Leaderboard myleaderboard;
 
-    // ADD THESE TWO LINES FOR AUDIO DEBOUNCING:
+    // ADDING THESE TWO LINES FOR AUDIO DEBOUNCING:
     bool playHoveredLastFrame = false;
     bool leaderboardHoveredLastFrame = false;
 
