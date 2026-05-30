@@ -22,7 +22,7 @@ int main()
 
         if (current_State == GameState::MainMenu)
         { // handling button presses
-            mainMenu.Input(window, current_State);
+          // mainMenu.Input(window, current_State);
         }
 
         // --- UPDATED CODE FOR BALL IMPACT SFX  ---
@@ -50,7 +50,7 @@ int main()
 
         if (current_State == GameState::MainMenu) // displaying info on screen
         {
-            mainMenu.draw(window);
+            mainMenu.draw(window, current_State);
         }
         else if (current_State == GameState::Leaderboard)
         {
