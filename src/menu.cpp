@@ -17,16 +17,34 @@ Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/Pla
 
     myleaderboard.loadassets("../assets/Orange Kid.otf");
 
+    // ADDING THIS LINE FOR BUTTON HOVER SOUND
     SFX.loadSound("HoverSound", "../assets/Sounds/ButtonHover.wav");
 }
 
 void Menu::Input(RenderWindow &window, GameState &current_state)
 {
+    // 1. WE MOVED THIS TO THE TOP (So both hover and click can use it)
+    Vector2i mousePosition = Mouse::getPosition(window);
+
+    // --- HOVER AUDIO DETECTION ---
+    // Check if mouse is within the boundaries of the Play or Leaderboard buttons
+    bool currentlyOverPlay = (mousePosition.x >= 500.f && mousePosition.x <= 780.f && mousePosition.y >= 500.f && mousePosition.y <= 580.f);
+    bool currentlyOverLeaderboard = (mousePosition.x >= 500.f && mousePosition.x <= 780.f && mousePosition.y >= 600.f && mousePosition.y <= 680.f);
+
+    // Play the sound ONLY at the exact split-second the cursor crosses onto the button area
+    if ((currentlyOverPlay && !playHoveredLastFrame) || (currentlyOverLeaderboard && !leaderboardHoveredLastFrame))
+    {
+        SFX.play("HoverSound");
+    }
+
+    // Save current frame statuses for the next frame
+    playHoveredLastFrame = currentlyOverPlay;
+    leaderboardHoveredLastFrame = currentlyOverLeaderboard;
+
     bool LeftMouseCurrent = Mouse::isButtonPressed(Mouse::Button::Left);
 
     if (LeftMouseCurrent && !LeftMousePressed)
     {
-        Vector2i mousePosition = Mouse::getPosition(window);
 
         if (play.isClicked(mousePosition)) // TO DO: add a debounce to this
         {
