@@ -29,21 +29,21 @@ void Paddle::update(float deltaTime)
 
 
 // call this when the player presses UP / W
-void Paddle::moveUp(float deltaTime)
+void Paddle::moveUp(float deltaTime, float upperlimit)
 {
     position.y -= speed.y * deltaTime;
 
-    if (position.y < 0.f)
-        position.y = 0.f;
+    if (position.y < upperlimit)
+        position.y = upperlimit;
 }
 
 // call this when the player presses DOWN / S
-void Paddle::moveDown(float deltaTime, float windowHeight)
+void Paddle::moveDown(float deltaTime, float lowerlimit)
 {
     position.y += speed.y * deltaTime;
 
-    if (position.y + height > windowHeight)
-        position.y = windowHeight - height;
+    if (position.y + height > lowerlimit)
+        position.y = lowerlimit - height;
 }
 
 
