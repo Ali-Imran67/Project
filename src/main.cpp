@@ -3,6 +3,7 @@
 #include "leaderboard.hpp"
 #include "gameState.hpp"
 #include "paddle.hpp"
+#include <string>
 
 int main()
 {
@@ -22,13 +23,40 @@ int main()
     Paddle rightPaddle(Vector2f(1210.f, 310.f), Vector2f(0.f, paddleSpeed), paddleWidth, paddleHeight);
 
     // Boundaries (Upper and Lower)
-    sf::RectangleShape upperBoundary(Vector2f(1280.f, 10.f));
-    upperBoundary.setPosition({0.f, 0.f});
-    upperBoundary.setFillColor(sf::Color::White);
+    float upperBoundaryY = 20.f; // Y position of the upper boundary
+    float lowerBoundaryY = 660.f; // Y position of the lower boundary
+    float boundarythickness = 40.f; // Thickness of the boundary rectangles
 
-    sf::RectangleShape lowerBoundary(Vector2f(1280.f, 10.f));
-    lowerBoundary.setPosition({0.f, 710.f});
-    lowerBoundary.setFillColor(sf::Color::White);
+    sf::RectangleShape upperBoundary(Vector2f(1280.f, boundarythickness));
+    upperBoundary.setPosition({0.f, upperBoundaryY});
+    upperBoundary.setFillColor(sf::Color(0xc1fbffff));  //light blue color of boundary as decided 
+
+    sf::RectangleShape lowerBoundary(Vector2f(1280.f, boundarythickness));
+    lowerBoundary.setPosition({0.f, lowerBoundaryY});
+    lowerBoundary.setFillColor(sf::Color(0xc1fbffff));  //light blue color of boundary as decided 
+
+    sf::Font gameFont;
+    if (!gameFont.openFromFile("../assets/Orange Kid.otf"))
+    {
+        printf("Unable to load font for game\n");
+    }
+
+    sf::Text p1Text(gameFont, "", 30);
+    p1Text.setFillColor(sf::Color::Black);
+    p1Text.setPosition({50.f, upperBoundaryY + 2.f});
+
+    sf::Text p2Text(gameFont, "", 30);
+    p2Text.setFillColor(sf::Color::Black);
+    p2Text.setPosition({1150.f, upperBoundaryY + 2.f});
+
+    //Score Text
+    int p1Score = 0;
+    int p2Score = 0;
+    sf::Text scoreText(gameFont, "0 : 0", 30);
+    scoreText.setFillColor(sf::Color::Black);
+    scoreText.setPosition({610.f, upperBoundaryY + 2.f});
+
+    bool namesloaded = false;
 
     sf::Clock clock; // Clock for delta time calculation
 
@@ -57,27 +85,39 @@ int main()
         // GamePlay Logic
         if(current_State == GameState::Playing)
         {
+            if (!namesloaded)
+            {
+                p1Text.setString(mainMenu.getPlayer1Name());
+                p2Text.setString(mainMenu.getPlayer2Name());
+                namesloaded = true;
+            }
+
+            float upperLimit = upperBoundaryY + boundarythickness;
+            float lowerLimit = lowerBoundaryY; // Calculation of boundaries so Paddles don't go out 
+
             //Left Paddle Input keys
             if (Keyboard::isKeyPressed(Keyboard::Key::W))
             {
-                leftPaddle.moveUp(deltaTime);
+                leftPaddle.moveUp(deltaTime, upperLimit);
             }
             if (Keyboard::isKeyPressed(Keyboard::Key::S))
             {
-                leftPaddle.moveDown(deltaTime, 720.f);
+                leftPaddle.moveDown(deltaTime, lowerLimit);
             }
 
             //Right Paddle Input keys
             if (Keyboard::isKeyPressed(Keyboard::Key::Up))
             {
-                rightPaddle.moveUp(deltaTime);
+                rightPaddle.moveUp(deltaTime, upperLimit);
             }
             if (Keyboard::isKeyPressed(Keyboard::Key::Down))
             {
-                rightPaddle.moveDown(deltaTime, 720.f);
+                rightPaddle.moveDown(deltaTime, lowerLimit);
             }
 
-            // Add collision detection and ball movement logic here
+            // TODO: Add collision detection and ball movement logic here
+            // Update the scoreText string when points are scored:
+            // scoreText.setString(std::to_string(p1ScoreCounter) + "  :  " + std::to_string(p2ScoreCounter));
         }
 
 
@@ -92,6 +132,9 @@ int main()
         {
             window.draw(upperBoundary);
             window.draw(lowerBoundary);
+            window.draw(p1Text);
+            window.draw(p2Text);
+            window.draw(scoreText);
             leftPaddle.draw(window);
             rightPaddle.draw(window);
 

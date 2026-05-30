@@ -29,6 +29,8 @@ class Menu {
     public:
 
     Menu();
+    String getPlayer1Name() const { return Player1Name; }
+    String getPlayer2Name() const { return Player2Name; }
     void Input(RenderWindow& window, GameState& current_state);
     void draw(RenderWindow& window, GameState& current_state);
     void handleTextEvents(const Event& event, GameState& current_state);
