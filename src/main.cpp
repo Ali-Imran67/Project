@@ -8,11 +8,11 @@
 
 int main()
 {
-    RenderWindow window(VideoMode({1280, 720}), "Ping Pong");
+    sf::RenderWindow window(sf::VideoMode({1280, 720}), "Ping Pong");
     GameState current_State = GameState::MainMenu;
     Menu mainMenu;
 
-    // Adding these lines for ball impact sounds:
+    // Ball Impact Sounds
     SoundManager gameSFX;
     gameSFX.loadSound("Impact", "../assets/Sounds/BallImpact.wav");
 
@@ -21,24 +21,21 @@ int main()
     float paddleHeight = 100.f;
     float paddleSpeed = 500.f;
 
-    // Left Paddle
     Paddle leftPaddle(Vector2f(50.f, 310.f), Vector2f(0.f, paddleSpeed), paddleWidth, paddleHeight);
-
-    // Right Paddle
     Paddle rightPaddle(Vector2f(1210.f, 310.f), Vector2f(0.f, paddleSpeed), paddleWidth, paddleHeight);
 
-    // Boundaries (Upper and Lower)
-    float upperBoundaryY = 20.f;    // Y position of the upper boundary
-    float lowerBoundaryY = 660.f;   // Y position of the lower boundary
-    float boundarythickness = 40.f; // Thickness of the boundary rectangles
+    // Boundaries Setup
+    float upperBoundaryY = 20.f;    
+    float lowerBoundaryY = 660.f;   
+    float boundarythickness = 40.f; 
 
     sf::RectangleShape upperBoundary(Vector2f(1280.f, boundarythickness));
     upperBoundary.setPosition({0.f, upperBoundaryY});
-    upperBoundary.setFillColor(sf::Color(0xc1fbffff)); // light blue color of boundary as decided
+    upperBoundary.setFillColor(sf::Color(0xc1fbffff)); 
 
     sf::RectangleShape lowerBoundary(Vector2f(1280.f, boundarythickness));
     lowerBoundary.setPosition({0.f, lowerBoundaryY});
-    lowerBoundary.setFillColor(sf::Color(0xc1fbffff)); // light blue color of boundary as decided
+    lowerBoundary.setFillColor(sf::Color(0xc1fbffff)); 
 
     sf::Font gameFont;
     if (!gameFont.openFromFile("../assets/Orange Kid.otf"))
@@ -46,6 +43,7 @@ int main()
         printf("Unable to load font for game\n");
     }
 
+    // UI Text Configurations
     sf::Text p1Text(gameFont, "", 40);
     p1Text.setFillColor(sf::Color::Black);
     p1Text.setPosition({50.f, upperBoundaryY - 8.f});
@@ -54,7 +52,6 @@ int main()
     p2Text.setFillColor(sf::Color::Black);
     p2Text.setPosition({1150.f, upperBoundaryY - 8.f});
 
-    // Score Text
     int p1Score = 0;
     int p2Score = 0;
     sf::Text scoreText(gameFont, "0 : 0", 40);
@@ -62,111 +59,90 @@ int main()
     scoreText.setPosition({610.f, upperBoundaryY - 8.f});
 
     bool namesloaded = false;
+    sf::Clock clock; 
 
-    sf::Clock clock; // Clock for delta time calculation
-
+    // --- MAIN GAME LOOP ---
     while (window.isOpen())
     {
+        float deltaTime = clock.restart().asSeconds(); 
 
-        float deltaTime = clock.restart().asSeconds(); // Calculate delta time
-
+        // 1. EVENT POLLING PHASE
         while (const auto event = window.pollEvent())
         {
-            if (event->is<Event::Closed>())
+            if (event->is<sf::Event::Closed>())
                 window.close();
+
+            if (current_State == GameState::NameEntry)
+            {
+                mainMenu.handleTextEvents(*event, current_State);
+            }
         }
 
-        if (current_State == GameState::MainMenu)
-        { // handling button presses
-          // mainMenu.Input(window, current_State);
-        }
-
-        // --- Updated code for sfx ---
-        else if (current_State == GameState::Playing)
+        // 2. REAL-TIME UPDATE PHASE (Grouped cleanly by state)
+        switch (current_State)
         {
-            // Temporary placeholder variables so the compiler doesn't give an error.
-            // We can Change these to your actual ball/paddle collision conditions later!
-            bool ballHitsWall = false;
-            bool ballHitsPaddle = false;
+            case GameState::MainMenu:
+                mainMenu.Input(window, current_State);
+                break;
 
-            // Trigger when the ball collides with top or bottom screen boundaries
-            if (ballHitsWall)
+            case GameState::Playing:
             {
-                gameSFX.play("Impact");
-            }
+                // Name Initialization Guard
+                if (!namesloaded)
+                {
+                    p1Text.setString(mainMenu.getPlayer1Name());
+                    p2Text.setString(mainMenu.getPlayer2Name());
+                    namesloaded = true;
+                }
 
-            // Trigger when the ball collides with player or enemy paddles
-            if (ballHitsPaddle)
-            {
-                gameSFX.play("Impact");
+                // Audio Logic Placeholder Check
+                bool ballHitsWall = false;
+                bool ballHitsPaddle = false;
+
+                if (ballHitsWall || ballHitsPaddle)
+                {
+                    gameSFX.play("Impact");
+                }
+
+                // Gameplay Bounds & Input Handling
+                float upperLimit = upperBoundaryY + boundarythickness;
+                float lowerLimit = lowerBoundaryY; 
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))    leftPaddle.moveUp(deltaTime, upperLimit);
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))    leftPaddle.moveDown(deltaTime, lowerLimit);
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))   rightPaddle.moveUp(deltaTime, upperLimit);
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) rightPaddle.moveDown(deltaTime, lowerLimit);
+                
+                // TODO: Add collision/ball updates here
+                break;
             }
+            default:
+                break;
         }
 
-        if (current_State == GameState::MainMenu) // displaying info on screen
+        // 3. UNIFIED RENDERING PHASE
+        window.clear(sf::Color::Black); 
+
+        switch (current_State)
         {
-            mainMenu.draw(window, current_State);
-        }
-        else if (current_State == GameState::Leaderboard)
-        {
-            // TO DO: Kabeer this is where the leaderboard goes
-        }
-        // GamePlay Logic
-        if (current_State == GameState::Playing)
-        {
-            if (!namesloaded)
-            {
-                p1Text.setString(mainMenu.getPlayer1Name());
-                p2Text.setString(mainMenu.getPlayer2Name());
-                namesloaded = true;
-            }
+            case GameState::MainMenu:
+            case GameState::NameEntry:
+            case GameState::Leaderboard:
+                mainMenu.draw(window, current_State);
+                break;
 
-            float upperLimit = upperBoundaryY + boundarythickness;
-            float lowerLimit = lowerBoundaryY; // Calculation of boundaries so Paddles don't go out
-
-            // Left Paddle Input keys
-            if (Keyboard::isKeyPressed(Keyboard::Key::W))
-            {
-                leftPaddle.moveUp(deltaTime, upperLimit);
-            }
-            if (Keyboard::isKeyPressed(Keyboard::Key::S))
-            {
-                leftPaddle.moveDown(deltaTime, lowerLimit);
-            }
-
-            // Right Paddle Input keys
-            if (Keyboard::isKeyPressed(Keyboard::Key::Up))
-            {
-                rightPaddle.moveUp(deltaTime, upperLimit);
-            }
-            if (Keyboard::isKeyPressed(Keyboard::Key::Down))
-            {
-                rightPaddle.moveDown(deltaTime, lowerLimit);
-            }
-
-            // TODO: Add collision detection and ball movement logic here
-            // Update the scoreText string when points are scored:
-            // scoreText.setString(std::to_string(p1ScoreCounter) + "  :  " + std::to_string(p2ScoreCounter));
+            case GameState::Playing:
+                window.draw(upperBoundary);
+                window.draw(lowerBoundary);
+                window.draw(p1Text);
+                window.draw(p2Text);
+                window.draw(scoreText);
+                leftPaddle.draw(window);
+                rightPaddle.draw(window);
+                // Draw the ball later here
+                break;
         }
 
-        window.clear(sf::Color::Black); // Clear the window with black color before drawing
-
-        // Drawing logic based on game state
-        if (current_State == GameState::MainMenu || current_State == GameState::NameEntry || current_State == GameState::Leaderboard)
-        {
-            mainMenu.draw(window, current_State);
-        }
-        else if (current_State == GameState::Playing)
-        {
-            window.draw(upperBoundary);
-            window.draw(lowerBoundary);
-            window.draw(p1Text);
-            window.draw(p2Text);
-            window.draw(scoreText);
-            leftPaddle.draw(window);
-            rightPaddle.draw(window);
-
-            // Draw the ball Later here.
-        }
         window.display();
     }
 }
