@@ -19,8 +19,8 @@ public:
     void update(float deltaTime) override;
 
     // Move paddle up/down manually
-    void moveUp(float deltaTime);
-    void moveDown(float deltaTime, float windowHeight);
+    void moveUp(float deltaTime, float upperlimit);
+    void moveDown(float deltaTime, float lowerlimit);
 
     // Getters for collision detection 
     float getWidth()  const;

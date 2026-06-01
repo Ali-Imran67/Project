@@ -130,7 +130,7 @@ void Leaderboard::update(string p1, string p2, bool p1won, bool p2won)
     write.close();
 }
 
-void Leaderboard::show(sf::RenderWindow& window)
+void Leaderboard::show(sf::RenderWindow& window, GameState& current_state)
 {
     count = 0;
     ifstream read("leaderboard.txt");
@@ -164,6 +164,7 @@ void Leaderboard::show(sf::RenderWindow& window)
             if (backButton.isClicked(mousePosition))
             {
                 inleaderboard = false;
+                current_state = GameState::MainMenu;  // Return to the main menu when the back button is clicked
             }
         }
         leftMousePressed = leftMouseCurrent;

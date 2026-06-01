@@ -137,6 +137,6 @@ void Menu::draw(RenderWindow &window, GameState &current_state) // creating the 
 
     else if (current_state == GameState::Leaderboard)
     {
-        myleaderboard.show(window);
+        myleaderboard.show(window, current_state);
     }
 }
