@@ -8,7 +8,7 @@ int main()
     GameState current_State = GameState::MainMenu;
     Menu mainMenu;
 
-    // ADDING THESE  LINES FOR BALL IMPACT:
+    // Adding these lines for ball impact sounds:
     SoundManager gameSFX;
     gameSFX.loadSound("Impact", "../assets/Sounds/BallImpact.wav");
 
@@ -25,7 +25,7 @@ int main()
           // mainMenu.Input(window, current_State);
         }
 
-        // --- UPDATED CODE FOR BALL IMPACT SFX  ---
+        // --- Updated code for sfx ---
         else if (current_State == GameState::Playing)
         {
             // Temporary placeholder variables so the compiler doesn't give an error.

@@ -21,14 +21,14 @@ Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/Pla
 
     myleaderboard.loadassets("../assets/Orange Kid.otf");
 
-    // ADDING THIS LINE FOR BUTTON HOVER SOUND
+    //  Adding this line for Button Hover sound
     SFX.loadSound("HoverSound", "../assets/Sounds/ButtonHover.wav");
     nameField.setSelected(false);
 }
 
 void Menu::Input(RenderWindow &window, GameState &current_state)
 {
-    // 1. WE MOVED THIS TO THE TOP (So both hover and click can use it)
+    // 1.We moved this to the top (So both hover and click can use it)
     Vector2i mousePosition = Mouse::getPosition(window);
 
     // --- HOVER AUDIO DETECTION ---
@@ -36,7 +36,7 @@ void Menu::Input(RenderWindow &window, GameState &current_state)
     bool currentlyOverPlay = (mousePosition.x >= 500.f && mousePosition.x <= 780.f && mousePosition.y >= 500.f && mousePosition.y <= 580.f);
     bool currentlyOverLeaderboard = (mousePosition.x >= 500.f && mousePosition.x <= 780.f && mousePosition.y >= 600.f && mousePosition.y <= 680.f);
 
-    // Play the sound ONLY at the exact split-second the cursor crosses onto the button area
+    // Play the sound only at the exact split-second the cursor crosses onto the button area
     if ((currentlyOverPlay && !playHoveredLastFrame) || (currentlyOverLeaderboard && !leaderboardHoveredLastFrame))
     {
         SFX.play("HoverSound");
