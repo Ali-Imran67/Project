@@ -15,7 +15,7 @@ Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/Pla
         LogoSprite.setPosition({xPos, 240.0f});
     }
 
-    SFX.loadSound("MenuTheme", "../assets/Sounds/MenuTheme.wav");
+    SFX.loadSound("MenuTheme", "../assets/Sounds/MenuMusic.mp3");
     SFX.setLoop("MenuTheme", true);
     SFX.play("MenuTheme", 50.f);
 
