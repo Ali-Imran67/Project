@@ -17,7 +17,7 @@ Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/Pla
 
     SFX.loadSound("MenuTheme", "../assets/Sounds/MenuTheme.wav");
     SFX.setLoop("MenuTheme", true);
-    SFX.play("MenuTheme");
+    SFX.play("MenuTheme", 50.f);
 
     myleaderboard.loadassets("../assets/Orange Kid.otf");
 
@@ -39,7 +39,7 @@ void Menu::Input(RenderWindow &window, GameState &current_state)
     // Play the sound only at the exact split-second the cursor crosses onto the button area
     if ((currentlyOverPlay && !playHoveredLastFrame) || (currentlyOverLeaderboard && !leaderboardHoveredLastFrame))
     {
-        SFX.play("HoverSound");
+        SFX.play("HoverSound", 100.f);
     }
 
     // Save current frame statuses for the next frame

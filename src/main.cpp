@@ -101,7 +101,7 @@ int main()
 
                 if (ballHitsWall || ballHitsPaddle)
                 {
-                    gameSFX.play("Impact");
+                    gameSFX.play("Impact", 100.f);
                 }
 
                 // Gameplay Bounds & Input Handling

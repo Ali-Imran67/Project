@@ -9,11 +9,11 @@ void SoundManager::loadSound(string name, string directory)
     }
 }
 
-void SoundManager::play(string name)
+void SoundManager::play(string name, float volume)
 {
     if (sounds.count(name))
     {
-        sounds[name]->setVolume(100.f);
+        sounds[name]->setVolume(volume);
         sounds[name]->play();
     }
 }

@@ -15,7 +15,7 @@ class SoundManager {
     public:
 
     void loadSound(string name, string directory);
-    void play(string name);
+    void play(string name, float volume);
     void stop(string name);
     void setLoop(string name, bool state);
     bool IsPlaying(string name);
