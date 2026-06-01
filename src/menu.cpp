@@ -17,7 +17,7 @@ Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/Pla
 
     SFX.loadSound("MenuTheme", "../assets/Sounds/MenuMusic.mp3");
     SFX.setLoop("MenuTheme", true);
-    SFX.play("MenuTheme", 50.f);
+    SFX.play("MenuTheme", 5.f);
 
     myleaderboard.loadassets("../assets/Orange Kid.otf");
 
