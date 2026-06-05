@@ -21,28 +21,24 @@ Menu::Menu() : play("../assets/Textures/PlayButton.png", "../assets/Textures/Pla
 
     myleaderboard.loadassets("../assets/Orange Kid.otf");
 
-    //  Adding this line for Button Hover sound
+    //  button hover sound effect
     SFX.loadSound("HoverSound", "../assets/Sounds/ButtonHover.wav");
     nameField.setSelected(false);
 }
 
 void Menu::Input(RenderWindow &window, GameState &current_state)
 {
-    // 1.We moved this to the top (So both hover and click can use it)
     Vector2i mousePosition = Mouse::getPosition(window);
 
-    // --- HOVER AUDIO DETECTION ---
-    // Check if mouse is within the boundaries of the Play or Leaderboard buttons
+    // hover audio here
     bool currentlyOverPlay = (mousePosition.x >= 500.f && mousePosition.x <= 780.f && mousePosition.y >= 500.f && mousePosition.y <= 580.f);
     bool currentlyOverLeaderboard = (mousePosition.x >= 500.f && mousePosition.x <= 780.f && mousePosition.y >= 600.f && mousePosition.y <= 680.f);
 
-    // Play the sound only at the exact split-second the cursor crosses onto the button area
-    if ((currentlyOverPlay && !playHoveredLastFrame) || (currentlyOverLeaderboard && !leaderboardHoveredLastFrame))
+    if ((currentlyOverPlay && !playHoveredLastFrame) || (currentlyOverLeaderboard && !leaderboardHoveredLastFrame)) //debounce factored in, only plays sfx once when u hover
     {
         SFX.play("HoverSound", 100.f);
     }
 
-    // Save current frame statuses for the next frame
     playHoveredLastFrame = currentlyOverPlay;
     leaderboardHoveredLastFrame = currentlyOverLeaderboard;
 
@@ -65,7 +61,7 @@ void Menu::Input(RenderWindow &window, GameState &current_state)
         }
         if (leaderboard.isClicked(mousePosition))
         {
-            // display leaderboard
+            reloadLeaderboardData(); // loading leaderboard data
             current_state = GameState::Leaderboard;
         }
     }
@@ -139,4 +135,17 @@ void Menu::draw(RenderWindow &window, GameState &current_state) // creating the 
     {
         myleaderboard.show(window, current_state);
     }
+}
+void Menu::updateLeaderboard(const std::string& p1, const std::string& p2, bool p1won, bool p2won)
+{
+    myleaderboard.update(p1, p2, p1won, p2won);
+}
+
+void Menu::drawLeaderboard(sf::RenderWindow& window, GameState& state)
+{
+    myleaderboard.show(window, state);
+}
+void Menu::reloadLeaderboardData()
+{
+    myleaderboard.loadData();
 }

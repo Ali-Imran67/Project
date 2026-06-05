@@ -4,6 +4,7 @@ enum class GameState {
     MainMenu,
     Playing,
     NameEntry,
+    Paused,
     Leaderboard,
-    Exit
+    GameOver
 };

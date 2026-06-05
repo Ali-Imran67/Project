@@ -15,7 +15,7 @@ void Paddle::draw(RenderWindow& window)
     window.draw(rect);
 }
 
-// Moves paddle and clamps it so it never leaves the window vertically
+// update paddle position + clamp it
 void Paddle::update(float deltaTime)
 {
     shape::update(deltaTime);

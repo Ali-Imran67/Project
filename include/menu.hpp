@@ -37,4 +37,7 @@ public:
     void Input(RenderWindow &window, GameState &current_state);
     void draw(RenderWindow &window, GameState &current_state);
     void handleTextEvents(const Event &event, GameState &current_state);
+    void updateLeaderboard(const std::string& p1, const std::string& p2, bool p1won, bool p2won);
+    void drawLeaderboard(sf::RenderWindow& window, GameState& state);
+    void reloadLeaderboardData();
 };

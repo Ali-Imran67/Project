@@ -57,10 +57,10 @@ void Leaderboard::sortbywins(Playerdata player[], int count)
 void Leaderboard::update(string p1, string p2, bool p1won, bool p2won)
 {
     Playerdata player[100];
-    int count = 0;
+    int count = 0; // player entries counter
     ifstream read("leaderboard.txt");
     
-    while (read >> player[count].name >> player[count].score)
+    while (read >> player[count].name >> player[count].score) // going row by row through file
     {
         count++;
     }
@@ -68,7 +68,7 @@ void Leaderboard::update(string p1, string p2, bool p1won, bool p2won)
     bool p1found = false;
     for (int i = 0; i < count; i++)
     {
-        if (player[i].name == p1)
+        if (player[i].name == p1) // checking if player name already exists, and updating score
         {
             if (p1won)
             {
@@ -78,7 +78,7 @@ void Leaderboard::update(string p1, string p2, bool p1won, bool p2won)
             break;
         }
     }
-    if (!p1found)
+    if (!p1found) // new entry
     {
         player[count].name = p1;
         if (p1won)
@@ -125,115 +125,104 @@ void Leaderboard::update(string p1, string p2, bool p1won, bool p2won)
     }
     for (int i = 0; i < count; i++)
     {
-        write << setw(10) << player[i].name << setw(20) << player[i].score << endl;
+        write << player[i].name << " " << player[i].score << endl; // saving data
     }
     write.close();
 }
 
-void Leaderboard::show(sf::RenderWindow& window, GameState& current_state)
+void Leaderboard::loadData()
 {
     count = 0;
     ifstream read("leaderboard.txt");
-    if(read.is_open())
+    if (read.is_open())
     {
-        while (read >> player[count].name >> player[count].score)
+        while (count < 100 && read >> player[count].name >> player[count].score) // read existing file and set count
         {
             count++;
         }
         read.close();
         sortbywins(player, count);
     }
+}
 
-    bool inleaderboard = true;
+void Leaderboard::show(RenderWindow& window, GameState& current_state)
+{
+
     bool leftMousePressed = false;
+    bool leftMouseCurrent = Mouse::isButtonPressed(Mouse::Button::Left);
+    Vector2i mousePosition = Mouse::getPosition(window);
 
-    while (window.isOpen() && inleaderboard)
+    backButton.changeTexture(mousePosition); // changing texture of backButton
+
+    if (leftMouseCurrent && !leftMousePressed)
     {
-        while (const optional event = window.pollEvent())
+        if (backButton.isClicked(mousePosition))
         {
-            if(event->is<Event::Closed>()) window.close();
+            current_state = GameState::MainMenu;
+            return;
         }
-
-        bool leftMouseCurrent = Mouse::isButtonPressed(Mouse::Button::Left);
-        Vector2i mousePosition = Mouse::getPosition(window);
-
-        backButton.changeTexture(mousePosition);
-
-        if (leftMouseCurrent && !leftMousePressed)
-        {
-            if (backButton.isClicked(mousePosition))
-            {
-                inleaderboard = false;
-                current_state = GameState::MainMenu;  // Return to the main menu when the back button is clicked
-            }
-        }
-        leftMousePressed = leftMouseCurrent;
-
-        window.clear(sf::Color::Black); //First clear window to Black before drawing the leaderboard
-        backButton.create(window); //Creating the back button to return to the menu
-
-        //Drawing Main Frame
-        sf::Sprite frameSprite(frameTexture);
-        frameSprite.setPosition({(1280.f - frameSprite.getGlobalBounds().size.x) / 2.f, 150.f});
-        window.draw(frameSprite);
-
-        //Drawing the Image Header "Leaderboard"
-        sf::Sprite headerSprite(headertex);
-        headerSprite.setPosition({(1280.f - headerSprite.getGlobalBounds().size.x) / 2.f, 90.f});
-        window.draw(headerSprite);
-
-        if (fontLoaded)
-        {
-           float startX = 250.f;
-           float startY = 200.f;
-
-           sf::Text headerRank(font, "Rank", 30);
-           headerRank.setPosition({startX, startY});
-           window.draw(headerRank);
-
-           sf::Text headerName(font, "Player Name", 30);
-           headerName.setPosition({startX + 150.f, startY});
-           window.draw(headerName);
-
-           sf::Text headerWins(font, "Wins", 30);
-           headerWins.setPosition({startX + 650.f, startY});
-           window.draw(headerWins);
-
-           sf::Sprite placeholderSprite(placeholderTexture);
-           sf::Sprite rankSprite(ranktex);
-           float rowSpacing = 65.f;
-
-           for(int i =0; i < count && i < 5; i++)
-           {
-                float currentY = startY + 60.f + (i * rowSpacing);
-
-                //Drawing Rank Image Box
-                rankSprite.setPosition({startX - 5.f, currentY - 5.f});
-                window.draw(rankSprite);
-
-                //Drawing Rank Text Number
-                sf::Text rankText(font, to_string(i+1) + ".", 30);
-                rankText.setPosition({startX + 10.f, currentY});
-                window.draw(rankText);
-
-                //Drawing Player Name Box
-                placeholderSprite.setPosition({startX + 140.f, currentY - 5.f});
-                window.draw(placeholderSprite);
-
-                //Drawing Player Name Text
-                sf::Text nameText(font, player[i].name, 30);
-                nameText.setPosition({startX + 150.f, currentY});
-                window.draw(nameText);
-
-                //Drawing Player Wins Text
-                sf::Text winsText(font, to_string(player[i].score), 30);
-                winsText.setPosition({startX + 670.f, currentY});
-                window.draw(winsText);
-           }
-        }
-
-        window.display();
     }
 
+    backButton.create(window);  //creating button
+
+    Sprite frameSprite(frameTexture); // box
+    frameSprite.setPosition({(1280.f - frameSprite.getGlobalBounds().size.x) / 2.f, 150.f});
+    window.draw(frameSprite);
+
+    Sprite headerSprite(headertex); // leaderboard header
+    headerSprite.setPosition({(1280.f - headerSprite.getGlobalBounds().size.x) / 2.f, 90.f});
+    window.draw(headerSprite);
+
+    if (fontLoaded)
+    {
+       float startX = 250.f;
+       float startY = 200.f;
+        // columns
+       Text headerRank(font, "Rank", 30);
+       headerRank.setPosition({startX, startY});
+       window.draw(headerRank);
+
+       Text headerName(font, "Player Name", 30);
+       headerName.setPosition({startX + 150.f, startY});
+       window.draw(headerName);
+
+       Text headerWins(font, "Wins", 30);
+       headerWins.setPosition({startX + 650.f, startY});
+       window.draw(headerWins);
+
+       Sprite placeholderSprite(placeholderTexture);
+       Sprite rankSprite(ranktex);
+       float rowSpacing = 65.f;
+
+       for(int i = 0; i < count && i < 5; i++) // will display top 5 records
+       {
+            float currentY = startY + 60.f + (i * rowSpacing);
+
+            rankSprite.setPosition({startX - 5.f, currentY - 5.f}); // rank display button
+            window.draw(rankSprite);
+
+            
+            Text rankText(font, to_string(i + 1) + ".", 42); // tried to center Rank text here
+            rankText.setFillColor(sf::Color::White);
+            FloatRect rankTextBounds = rankText.getLocalBounds();
+            rankText.setOrigin({
+                rankTextBounds.position.x + (rankTextBounds.size.x / 2.f),
+                rankTextBounds.position.y + (rankTextBounds.size.y / 2.f)
+            });
+            rankText.setPosition({startX + 22.f, currentY + 16.f}); 
+            window.draw(rankText);
+
+            placeholderSprite.setPosition({startX + 140.f, currentY - 5.f}); // player name box
+            window.draw(placeholderSprite);
+
+            Text nameText(font, player[i].name, 30);
+            nameText.setPosition({startX + 150.f, currentY});
+            window.draw(nameText);
+
+            Text winsText(font, to_string(player[i].score), 30);
+            winsText.setPosition({startX + 670.f, currentY});
+            window.draw(winsText);
+       }
+    }
 }
 

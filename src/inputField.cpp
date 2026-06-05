@@ -81,6 +81,9 @@ void InputBox::handleInput(const Event& event) {
                 (unicodeValue >= '0' && unicodeValue <= '9') ||
                 unicodeValue == ' ') 
             {
+                if (unicodeValue >= 'a' && unicodeValue <= 'z') {
+                    unicodeValue -= 32; // 'a'(97) - 'A'(65) = 32
+                }
                 var_inputString += unicodeValue;
             }
         }
@@ -91,7 +94,7 @@ void InputBox::handleInput(const Event& event) {
 
 
 void InputBox::draw(RenderWindow& window) {
-    BoxFrame.create(window);
+    BoxFrame.create(window); // create input box
     window.draw(text_var);
 }
 

@@ -3,15 +3,15 @@
 void SoundManager::loadSound(string name, string directory)
 {
     SoundBuffer buffer;
-    if (buffers[name].loadFromFile(directory))
+    if (buffers[name].loadFromFile(directory)) // loading file and storing in buffer map
     {
-        sounds[name] = make_unique<Sound>(buffers[name]);
+        sounds[name] = make_unique<Sound>(buffers[name]); // turn it into a unique pointer for memory management and store it
     }
 }
 
 void SoundManager::play(string name, float volume)
 {
-    if (sounds.count(name))
+    if (sounds.count(name)) // check if sound actually exists in the map
     {
         sounds[name]->setVolume(volume);
         sounds[name]->play();

@@ -4,6 +4,7 @@
 #include "leaderboard.hpp"
 #include "gameState.hpp"
 #include "paddle.hpp"
+#include "ball.hpp"
 #include <string>
 
 int main()
@@ -14,7 +15,7 @@ int main()
 
     // Ball Impact Sounds
     SoundManager gameSFX;
-    gameSFX.loadSound("Impact", "../assets/Sounds/BallImpact.wav");
+    gameSFX.loadSound("Impact", "../assets/Sounds/BallImpact.mp3");
 
     // GamePlay Setup
     float paddleWidth = 20.f;
@@ -23,6 +24,9 @@ int main()
 
     Paddle leftPaddle(Vector2f(50.f, 310.f), Vector2f(0.f, paddleSpeed), paddleWidth, paddleHeight);
     Paddle rightPaddle(Vector2f(1210.f, 310.f), Vector2f(0.f, paddleSpeed), paddleWidth, paddleHeight);
+
+    // Ball Initialization
+    Ball gameBall(Vector2f(640.f, 360.f), 12.f, Vector2f(400.f, 300.f));
 
     // Boundaries Setup
     float upperBoundaryY = 20.f;    
@@ -58,6 +62,25 @@ int main()
     scoreText.setFillColor(sf::Color::Black);
     scoreText.setPosition({610.f, upperBoundaryY - 8.f});
 
+    sf::Text pauseText(gameFont, "GAME PAUSED - PRESS 'P' TO RESUME", 30);
+    pauseText.setFillColor(sf::Color::Black);
+    pauseText.setPosition({450.f, lowerBoundaryY + 2.f}); 
+
+    // Game Over UI Text elements
+    sf::Text winText(gameFont, "", 60);
+    winText.setFillColor(sf::Color::Yellow);
+
+    sf::Text gameOverOptions(gameFont, "PRESS 'R' FOR REMATCH  |  PRESS 'M' FOR MAIN MENU", 35);
+    gameOverOptions.setFillColor(sf::Color::White);
+    
+    // Perfect pixel bounding box alignment for the options subtext
+    sf::FloatRect optionsRect = gameOverOptions.getLocalBounds();
+    gameOverOptions.setOrigin({
+        optionsRect.position.x + (optionsRect.size.x / 2.f),
+        optionsRect.position.y + (optionsRect.size.y / 2.f)
+    });
+    gameOverOptions.setPosition({640.f, 440.f});
+
     bool namesloaded = false;
     sf::Clock clock; 
 
@@ -76,9 +99,53 @@ int main()
             {
                 mainMenu.handleTextEvents(*event, current_State);
             }
+
+            // Real-Time Keyboard Toggle Listeners via PollEvent
+            if (auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+            {
+                // Pause/Resume Input Toggle
+                if (keyPressed->code == sf::Keyboard::Key::P)
+                {
+                    if (current_State == GameState::Playing)       current_State = GameState::Paused;
+                    else if (current_State == GameState::Paused)  current_State = GameState::Playing;
+                }
+
+                // GameOver Navigation Input Switches
+                if (current_State == GameState::GameOver)
+                {
+                    // Rematch selection option
+                    if (keyPressed->code == sf::Keyboard::Key::R)
+                    {
+                        p1Score = 0;
+                        p2Score = 0;
+                        scoreText.setString("0 : 0");
+                        gameBall.setPosition({640.f, 360.f});
+                        gameBall.setSpeed({400.f, 300.f});
+                        leftPaddle.setPosition({50.f, 310.f});
+                        rightPaddle.setPosition({1210.f, 310.f});
+                        current_State = GameState::Playing;
+                    }
+                    // Return to Menu selection option
+                    if (keyPressed->code == sf::Keyboard::Key::M)
+                    {
+                        p1Score = 0;
+                        p2Score = 0;
+                        scoreText.setString("0 : 0");
+                        namesloaded = false; // Force re-pull name strings on future matches
+                        
+                        // Reset the ball here so it doesn't trigger a score on frame 1 of the next game
+                        gameBall.setPosition({640.f, 360.f});
+                        gameBall.setSpeed({400.f, 300.f});
+                        leftPaddle.setPosition({50.f, 310.f});
+                        rightPaddle.setPosition({1210.f, 310.f});
+                        
+                        current_State = GameState::MainMenu;
+                    }
+                }
+            }
         }
 
-        // 2. REAL-TIME UPDATE PHASE (Grouped cleanly by state)
+        // 2. REAL-TIME UPDATE PHASE
         switch (current_State)
         {
             case GameState::MainMenu:
@@ -87,7 +154,6 @@ int main()
 
             case GameState::Playing:
             {
-                // Name Initialization Guard
                 if (!namesloaded)
                 {
                     p1Text.setString(mainMenu.getPlayer1Name());
@@ -95,16 +161,6 @@ int main()
                     namesloaded = true;
                 }
 
-                // Audio Logic Placeholder Check
-                bool ballHitsWall = false;
-                bool ballHitsPaddle = false;
-
-                if (ballHitsWall || ballHitsPaddle)
-                {
-                    gameSFX.play("Impact", 100.f);
-                }
-
-                // Gameplay Bounds & Input Handling
                 float upperLimit = upperBoundaryY + boundarythickness;
                 float lowerLimit = lowerBoundaryY; 
 
@@ -113,7 +169,68 @@ int main()
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))   rightPaddle.moveUp(deltaTime, upperLimit);
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) rightPaddle.moveDown(deltaTime, lowerLimit);
                 
-                // TODO: Add collision/ball updates here
+                gameBall.update(deltaTime);
+                gameBall.checkCollisions(leftPaddle.getBounds(), rightPaddle.getBounds(), gameSFX);
+
+                // Scoring Metrics Processing
+                if (gameBall.getPosition().x < 0.f) // Right player scores
+                {
+                    p2Score++;
+                    scoreText.setString(std::to_string(p1Score) + " : " + std::to_string(p2Score));
+                    
+                    if (p2Score >= 5)
+                    {
+                        std::string p1Name = mainMenu.getPlayer1Name().toAnsiString();
+                        std::string p2Name = mainMenu.getPlayer2Name().toAnsiString();
+
+                        // Fire automatic file storage update (P2 Won, P1 Lost)
+                        mainMenu.updateLeaderboard(p1Name, p2Name, false, true);
+
+                        std::string winStr = p2Name + " WINS THE MATCH!";
+                        winText.setString(winStr);
+                        
+                        // Pixel perfect character box centering alignment calculation
+                        sf::FloatRect textRect = winText.getLocalBounds();
+                        winText.setOrigin({textRect.position.x + (textRect.size.x / 2.f), textRect.position.y + (textRect.size.y / 2.f)});
+                        winText.setPosition({640.f, 360.f});
+                        
+                        current_State = GameState::GameOver;
+                    }
+                    else
+                    {
+                        gameBall.setPosition({640.f, 360.f});
+                        gameBall.setSpeed({400.f, -300.f});
+                    }
+                }
+                else if (gameBall.getPosition().x > 1280.f) // Left player scores
+                {
+                    p1Score++;
+                    scoreText.setString(std::to_string(p1Score) + " : " + std::to_string(p2Score));
+
+                    if (p1Score >= 5)
+                    {
+                        std::string p1Name = mainMenu.getPlayer1Name().toAnsiString();
+                        std::string p2Name = mainMenu.getPlayer2Name().toAnsiString();
+
+                        // Fire automatic file storage update (P1 Won, P2 Lost)
+                        mainMenu.updateLeaderboard(p1Name, p2Name, true, false);
+
+                        std::string winStr = p1Name + " WINS THE MATCH!";
+                        winText.setString(winStr);
+                        
+                        // Pixel perfect character box centering alignment calculation
+                        sf::FloatRect textRect = winText.getLocalBounds();
+                        winText.setOrigin({textRect.position.x + (textRect.size.x / 2.f), textRect.position.y + (textRect.size.y / 2.f)});
+                        winText.setPosition({640.f, 360.f});
+                        
+                        current_State = GameState::GameOver;
+                    }
+                    else
+                    {
+                        gameBall.setPosition({640.f, 360.f});
+                        gameBall.setSpeed({-400.f, 300.f});
+                    }
+                }
                 break;
             }
             default:
@@ -127,11 +244,15 @@ int main()
         {
             case GameState::MainMenu:
             case GameState::NameEntry:
-            case GameState::Leaderboard:
                 mainMenu.draw(window, current_State);
                 break;
 
+            case GameState::Leaderboard:
+                mainMenu.drawLeaderboard(window, current_State);
+                break;
             case GameState::Playing:
+            case GameState::Paused:
+            case GameState::GameOver: 
                 window.draw(upperBoundary);
                 window.draw(lowerBoundary);
                 window.draw(p1Text);
@@ -139,7 +260,21 @@ int main()
                 window.draw(scoreText);
                 leftPaddle.draw(window);
                 rightPaddle.draw(window);
-                // Draw the ball later here
+                
+                if (current_State != GameState::GameOver) 
+                {
+                    gameBall.draw(window); 
+                }
+
+                if (current_State == GameState::Paused)
+                {
+                    window.draw(pauseText);
+                }
+                else if (current_State == GameState::GameOver)
+                {
+                    window.draw(winText);
+                    window.draw(gameOverOptions);
+                }
                 break;
         }
 
