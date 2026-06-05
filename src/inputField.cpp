@@ -67,7 +67,7 @@ void InputBox::handleInput(const Event& event) {
         
         char32_t unicodeValue = textEntered->unicode;
 
-        // handle Backspace
+        // backspace functionality
         if (unicodeValue == 8) {
             if (!var_inputString.isEmpty()) {
                 var_inputString.erase(var_inputString.getSize() - 1, 1);
@@ -75,12 +75,11 @@ void InputBox::handleInput(const Event& event) {
         }
         // handling normal typing here
         else if (var_inputString.getSize() < textLimit) {
-            // white list, stops weird character entries
             if ((unicodeValue >= 'A' && unicodeValue <= 'Z') ||
                 (unicodeValue >= 'a' && unicodeValue <= 'z') ||
-                (unicodeValue >= '0' && unicodeValue <= '9') ||
-                unicodeValue == ' ') 
+                (unicodeValue >= '0' && unicodeValue <= '9')) 
             {
+                // will only write uppercase letters
                 if (unicodeValue >= 'a' && unicodeValue <= 'z') {
                     unicodeValue -= 32; // 'a'(97) - 'A'(65) = 32
                 }
